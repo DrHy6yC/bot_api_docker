@@ -1,7 +1,6 @@
 from typing import Annotated
 from contextlib import asynccontextmanager
 
-
 from fastapi import FastAPI, HTTPException, Query
 from sqlmodel import select
 
@@ -38,11 +37,12 @@ async def create_hero(hero: HeroCreate, session: SessionDep):
     return db_hero
 
 
+# TODO Исправить ошибку "AttributeError: 'AsyncSession' object has no attribute 'exec'"
 @app.get("/heroes/", response_model=list[HeroPublic])
 async def read_heroes(
-    session: SessionDep,
-    offset: int = 0,
-    limit: Annotated[int, Query(le=100)] = 100,
+        session: SessionDep,
+        offset: int = 0,
+        limit: Annotated[int, Query(le=100)] = 100,
 ):
     heroes = await session.exec(select(Hero).offset(offset).limit(limit)).all()
     return heroes
