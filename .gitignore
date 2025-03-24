@@ -1,4 +1,3 @@
-.gitignore
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -165,3 +164,4 @@ cython_debug/
 
 # Project
 /postgres-data/
+/database.db
