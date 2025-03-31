@@ -1,17 +1,12 @@
 services:
   db_api:
-    image: drhy6yc/bot_api:0.0.1
+    image: drhy6yc/bot_api:0.0.2
     container_name: db_api
     ports:
       - "8000:8000"
     networks:
       - network_bot
     restart: unless-stopped
-    env_file:
-      - ./.env
-    environment:
-      - clientID: ${clientID}
-      - redirect_us_uri: ${clientID}
 
 networks:
   network_bot:
