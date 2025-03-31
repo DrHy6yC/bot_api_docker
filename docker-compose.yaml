@@ -10,8 +10,8 @@ services:
     env_file:
       - ./.env
     environment:
-      - clientID
-      - redirect_us_uri
+      - clientID: ${clientID}
+      - redirect_us_uri: ${clientID}
 
 networks:
   network_bot:

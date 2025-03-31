@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+site = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -27,7 +27,6 @@
         <a href="https://drhy6yc.ru/docs#/" target="_blank">Swagger</a>
         <a href="https://github.com/DrHy6yC" target="_blank">Мой Git</a>
         <a href="https://krasnodar.hh.ru/resume/46d175e3ff08684f230039ed1f564366383552" target="_blank">Резюме на hh.ru</a>
-        <a href="http://drhy6yc.ru/login" target="_blank">Авторизоваться через Яндекс</a>
     </nav>
     <h1>Добро пожаловать!</h1>
     <p>Это главная страница моего API сервера, тут можно:</p>
@@ -38,3 +37,4 @@
     </ul>
 </body>
 </html>
+"""

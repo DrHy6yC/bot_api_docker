@@ -47,14 +47,15 @@ async def websocket_endpoint(websocket: WebSocket):
 @app.get("/login")
 async def login(request: Request):
     client_id = clientID
+    print(client_id)
     redirect_uri = redirect_us_uri  # Замените на ваш URL
     query = urlencode({
         "client_id": client_id,
         "redirect_uri": redirect_uri,
         "response_type": "code",
-        "scope": "openid",
 
     })
+    print(f"https://oauth.yandex.ru/authorize?{query}")
     return RedirectResponse(f"https://oauth.yandex.ru/authorize?{query}")
 
 
