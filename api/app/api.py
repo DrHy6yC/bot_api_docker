@@ -1,7 +1,9 @@
 from typing import Annotated
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, WebSocket, HTTPException, Query
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 from sqlmodel import select
 
 from api.app.db import create_db_and_tables, SessionDep
@@ -18,14 +20,27 @@ async def lifespan(apps: FastAPI):
 app = FastAPI(lifespan=lifespan, title="Api DB")
 
 
-@app.get("/", tags=["Greetings"])
-async def hello():
-    return {"Message": "HI!"}
+templates = Jinja2Templates(directory="templates")
+
+
+@app.get("/", response_class=HTMLResponse)
+async def get(request):
+    temp = templates.TemplateResponse("index.html", {"request": request})
+    print(temp)
+    return temp
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_text()
+        await websocket.send_text(f"Message text was: {data}")
 
 
 @app.on_event("startup")
-def on_startup():
-    create_db_and_tables()
+async def on_startup():
+    await create_db_and_tables()
 
 
 @app.post("/heroes/", response_model=HeroPublic)
@@ -37,14 +52,13 @@ async def create_hero(hero: HeroCreate, session: SessionDep):
     return db_hero
 
 
-# TODO Исправить ошибку "AttributeError: 'AsyncSession' object has no attribute 'exec'"
 @app.get("/heroes/", response_model=list[HeroPublic])
 async def read_heroes(
         session: SessionDep,
         offset: int = 0,
         limit: Annotated[int, Query(le=100)] = 100,
 ):
-    heroes = await session.exec(select(Hero).offset(offset).limit(limit)).all()
+    heroes = (await session.execute(select(Hero).offset(offset).limit(limit))).scalars().all()
     return heroes
 
 
