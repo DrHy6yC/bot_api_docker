@@ -3,7 +3,7 @@ services:
     image: drhy6yc/bot_api:0.0.1
     container_name: db_api
     ports:
-      - "80:8000"
+      - "8000:8000"
     networks:
       - network_bot
     restart: unless-stopped
