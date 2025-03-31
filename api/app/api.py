@@ -1,13 +1,17 @@
 from typing import Annotated
 from contextlib import asynccontextmanager
+from urllib.parse import urlencode
 
-from fastapi import FastAPI, WebSocket, HTTPException, Query
+from fastapi import FastAPI, WebSocket, HTTPException, Query, Request
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
+from starlette.websockets import WebSocketDisconnect
+
 from sqlmodel import select
 
 from api.app.db import create_db_and_tables, SessionDep
 from api.app.schemas import HeroPublic, HeroCreate, Hero, HeroUpdate
+from api.app.config import clientID, redirect_us_uri
 
 
 @asynccontextmanager
@@ -20,22 +24,44 @@ async def lifespan(apps: FastAPI):
 app = FastAPI(lifespan=lifespan, title="Api DB")
 
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="api/app/templates")
 
 
 @app.get("/", response_class=HTMLResponse)
-async def get(request):
-    temp = templates.TemplateResponse("index.html", {"request": request})
-    print(temp)
-    return temp
+async def get(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
-        data = await websocket.receive_text()
-        await websocket.send_text(f"Message text was: {data}")
+        try:
+            data = await websocket.receive_text()
+            await websocket.send_text(f"Message text was: {data}")
+        except WebSocketDisconnect as e:
+            print(f"WebSocket disconnected: {e}")
+            break
+
+
+@app.get("/login")
+async def login(request: Request):
+    client_id = clientID
+    redirect_uri = redirect_us_uri  # Замените на ваш URL
+    query = urlencode({
+        "client_id": client_id,
+        "redirect_uri": redirect_uri,
+        "response_type": "code",
+        "scope": "openid",
+
+    })
+    return RedirectResponse(f"https://oauth.yandex.ru/authorize?{query}")
+
+
+@app.get("/callback")
+async def callback(request: Request, code: str):
+    # Здесь будет обработка полученного кода авторизации
+    return templates.TemplateResponse("callback.html", {"request": request, "code": code})
 
 
 @app.on_event("startup")
