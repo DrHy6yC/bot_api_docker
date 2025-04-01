@@ -1,3 +1,9 @@
 # comment
     venv
     postgres-data
+    .env
+    *.db
+    *.yaml
+    .gitignore
+    .git
+    .idea
