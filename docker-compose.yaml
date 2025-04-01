@@ -1,6 +1,6 @@
 services:
   db_api:
-    image: drhy6yc/bot_api:0.0.2
+    image: drhy6yc/bot_api:0.0.3
     container_name: db_api
     ports:
       - "8000:8000"
