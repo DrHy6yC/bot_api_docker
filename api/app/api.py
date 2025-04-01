@@ -11,7 +11,7 @@ from sqlmodel import select
 
 from api.app.db import create_db_and_tables, SessionDep
 from api.app.schemas import HeroPublic, HeroCreate, Hero, HeroUpdate
-from api.app.config import clientID, redirect_us_uri
+from api.app.config import client_id, redirect_uri, refs
 
 
 @asynccontextmanager
@@ -28,8 +28,11 @@ templates = Jinja2Templates(directory="api/app/templates")
 
 
 @app.get("/", response_class=HTMLResponse)
-async def get(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+async def index_page(request: Request):
+    return templates.TemplateResponse(
+        name="index.html",
+        request=request,
+        context=refs)
 
 
 @app.websocket("/ws")
@@ -46,9 +49,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.get("/login")
 async def login(request: Request):
-    client_id = clientID
     print(client_id)
-    redirect_uri = redirect_us_uri  # Замените на ваш URL
     query = urlencode({
         "client_id": client_id,
         "redirect_uri": redirect_uri,

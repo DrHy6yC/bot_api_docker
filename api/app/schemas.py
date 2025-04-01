@@ -1,5 +1,10 @@
+from pydantic import BaseModel
 from sqlmodel import Field, SQLModel
 
+
+class Ref(BaseModel):
+    url: str
+    target: str
 
 class HeroBase(SQLModel):
     name: str = Field(index=True)

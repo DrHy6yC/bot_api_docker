@@ -1,7 +1,11 @@
 services:
   db_api:
-    image: drhy6yc/bot_api:0.0.3
+    image: drhy6yc/bot_api:0.0.5
     container_name: db_api
+    environment:
+      CLIENT_ID: ${CLIENT_ID}
+      REDIRECT_YANDEX: ${REDIRECT_YANDEX}
+      OUR_URL: ${OUR_URL}
     ports:
       - "8000:8000"
     networks:

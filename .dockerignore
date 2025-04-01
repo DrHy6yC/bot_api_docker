@@ -1,9 +1,10 @@
 # comment
     venv
     postgres-data
-    .env
+    *.env
     *.db
     *.yaml
     .gitignore
     .git
     .idea
+    *__pycache__
