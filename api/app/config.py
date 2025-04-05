@@ -6,6 +6,7 @@ from api.app.schemas import Ref
 load_dotenv()
 
 client_id = getenv('CLIENT_ID')
+client_secret = getenv('CLIENT_SECRET')
 our_url = getenv('OUR_URL')
 redirect_us_uri = getenv('REDIRECT_YANDEX')
 redirect_uri = f'{our_url}/{redirect_us_uri}'

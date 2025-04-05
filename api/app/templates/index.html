@@ -7,14 +7,14 @@
 {% block body %}
 <nav>
     {% for ref in refs_nav %}
-    <a href= "{{ ref.url }}" target="_blank">{{ ref.target }}</a>
+    <a href= "{{ ref.url }}">{{ ref.target }}</a>
     {% endfor %}
 </nav>
 <h1>Добро пожаловать!</h1>
 <p>Это главная страница моего API сервера, тут можно:</p>
 <ul>
     {% for ref in refs_body %}
-    <li><strong><a href= "{{ ref.url }}" target="_blank">{{ ref.target }}</a></strong></li>
+    <li><strong><a href= "{{ ref.url }}">{{ ref.target }}</a></strong></li>
     {% endfor %}
 </ul>
 {% endblock %}

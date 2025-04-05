@@ -1,6 +1,6 @@
-from typing import Annotated
+from yandexid import YandexOAuth, YandexID
 from contextlib import asynccontextmanager
-from urllib.parse import urlencode
+from typing import Annotated
 
 from fastapi import FastAPI, WebSocket, HTTPException, Query, Request
 from fastapi.templating import Jinja2Templates
@@ -11,7 +11,7 @@ from sqlmodel import select
 
 from api.app.db import create_db_and_tables, SessionDep
 from api.app.schemas import HeroPublic, HeroCreate, Hero, HeroUpdate
-from api.app.config import client_id, redirect_uri, refs
+from api.app.config import client_id, client_secret, redirect_uri, refs
 
 
 @asynccontextmanager
@@ -27,7 +27,7 @@ app = FastAPI(lifespan=lifespan, title="Api DB")
 templates = Jinja2Templates(directory="api/app/templates")
 
 
-@app.get("/", response_class=HTMLResponse)
+@app.get(path="/", response_class=HTMLResponse)
 async def index_page(request: Request):
     return templates.TemplateResponse(
         name="index.html",
@@ -35,7 +35,7 @@ async def index_page(request: Request):
         context=refs)
 
 
-@app.websocket("/ws")
+@app.websocket(path="/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
@@ -47,23 +47,36 @@ async def websocket_endpoint(websocket: WebSocket):
             break
 
 
-@app.get("/login")
+@app.get(path="/login")
 async def login(request: Request):
-    print(client_id)
-    query = urlencode({
-        "client_id": client_id,
-        "redirect_uri": redirect_uri,
-        "response_type": "code",
+    yandex_oauth = YandexOAuth(
+        client_id=client_id,
+        client_secret=client_secret,
+        redirect_uri=redirect_uri
+    )
+    auth_url = yandex_oauth.get_authorization_url()
+    print(auth_url)
+    return RedirectResponse(auth_url)
 
-    })
-    print(f"https://oauth.yandex.ru/authorize?{query}")
-    return RedirectResponse(f"https://oauth.yandex.ru/authorize?{query}")
 
-
-@app.get("/callback")
-async def callback(request: Request, code: str):
-    # Здесь будет обработка полученного кода авторизации
-    return templates.TemplateResponse("callback.html", {"request": request, "code": code})
+@app.get(path="/callback")
+async def callback(request: Request, code: str, cid: str):
+    yandex_oauth = YandexOAuth(
+        client_id=client_id,
+        client_secret=client_secret,
+        redirect_uri=redirect_uri
+    )
+    try:
+        print(request.query_params.items())
+        token = yandex_oauth.get_token_from_code(code)
+        print(token)
+        yandex_id = YandexID(token.access_token)
+        user_info = yandex_id.get_user_info_json()
+        print(user_info.login)
+    except Exception as e:
+        print(e)
+        cid = "а ты кто?"
+    return templates.TemplateResponse("callback.html", {"request": request, "cid": cid})
 
 
 @app.on_event("startup")
@@ -71,7 +84,7 @@ async def on_startup():
     await create_db_and_tables()
 
 
-@app.post("/heroes/", response_model=HeroPublic)
+@app.post(path="/heroes/", response_model=HeroPublic)
 async def create_hero(hero: HeroCreate, session: SessionDep):
     db_hero = Hero.model_validate(hero)
     session.add(db_hero)
@@ -80,7 +93,7 @@ async def create_hero(hero: HeroCreate, session: SessionDep):
     return db_hero
 
 
-@app.get("/heroes/", response_model=list[HeroPublic])
+@app.get(path="/heroes/", response_model=list[HeroPublic])
 async def read_heroes(
         session: SessionDep,
         offset: int = 0,
@@ -90,7 +103,7 @@ async def read_heroes(
     return heroes
 
 
-@app.get("/heroes/{hero_id}", response_model=HeroPublic)
+@app.get(path="/heroes/{hero_id}", response_model=HeroPublic)
 async def read_hero(hero_id: int, session: SessionDep):
     hero = await session.get(Hero, hero_id)
     if not hero:
@@ -98,7 +111,7 @@ async def read_hero(hero_id: int, session: SessionDep):
     return hero
 
 
-@app.patch("/heroes/{hero_id}", response_model=HeroPublic)
+@app.patch(path="/heroes/{hero_id}", response_model=HeroPublic)
 async def update_hero(hero_id: int, hero: HeroUpdate, session: SessionDep):
     hero_db = await session.get(Hero, hero_id)
     if not hero_db:
@@ -111,7 +124,7 @@ async def update_hero(hero_id: int, hero: HeroUpdate, session: SessionDep):
     return hero_db
 
 
-@app.delete("/heroes/{hero_id}")
+@app.delete(path="/heroes/{hero_id}")
 async def delete_hero(hero_id: int, session: SessionDep):
     hero = await session.get(Hero, hero_id)
     if not hero:

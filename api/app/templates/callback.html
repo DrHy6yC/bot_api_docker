@@ -1,9 +1,19 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Callback</title>
-</head>
-<body>
-    <p>Authorization code: {{ code }}</p>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}
+Callback
+{% endblock %}
+
+{% block head%}
+
+{% endblock%}
+<script src="https://yastatic.net/s3/passport-sdk/autofill/v1/sdk-suggest-token-with-polyfills-latest.js"></script> 
+{% block body %}
+<nav>
+    {% for ref in refs_nav %}
+    <a href= "{{ ref.url }}" target="_blank">{{ ref.target }}</a>
+    {% endfor %}
+</nav>
+<h1>Авторизация</h1>
+<p>Привет, {{ cid }}!</p>
+{% endblock %}
