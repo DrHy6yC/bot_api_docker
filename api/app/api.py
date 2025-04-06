@@ -11,7 +11,7 @@ from sqlmodel import select
 
 from api.app.db import create_db_and_tables, SessionDep
 from api.app.schemas import HeroPublic, HeroCreate, Hero, HeroUpdate
-from api.app.config import client_id, client_secret, redirect_uri, refs
+from api.app.config import client_id, client_secret, redirect_uri, refs, our_url
 
 
 @asynccontextmanager
@@ -26,6 +26,11 @@ app = FastAPI(lifespan=lifespan, title="Api DB")
 
 templates = Jinja2Templates(directory="api/app/templates")
 
+yandex_oauth = YandexOAuth(
+        client_id=client_id,
+        client_secret=client_secret,
+        redirect_uri=redirect_uri
+    )
 
 @app.get(path="/", response_class=HTMLResponse)
 async def index_page(request: Request):
@@ -49,35 +54,46 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.get(path="/login")
 async def login(request: Request):
-    yandex_oauth = YandexOAuth(
-        client_id=client_id,
-        client_secret=client_secret,
-        redirect_uri=redirect_uri
-    )
     auth_url = yandex_oauth.get_authorization_url()
     print(auth_url)
     return RedirectResponse(auth_url)
 
 
-@app.get(path="/callback")
-async def callback(request: Request, code: str, cid: str):
-    yandex_oauth = YandexOAuth(
-        client_id=client_id,
-        client_secret=client_secret,
-        redirect_uri=redirect_uri
-    )
+@app.get(path="/token")
+async def get_token(request: Request, code: str, cid: str):
+    print(request.query_params)
     try:
-        print(request.query_params.items())
         token = yandex_oauth.get_token_from_code(code)
-        print(token)
         yandex_id = YandexID(token.access_token)
         user_info = yandex_id.get_user_info_json()
-        print(user_info.login)
+        print(user_info)
+        profile_url = f"{our_url}/profile/{cid}"
+        #TODO добавить отпарвку в БД данных о клиенте
     except Exception as e:
         print(e)
-        cid = "а ты кто?"
-    return templates.TemplateResponse("callback.html", {"request": request, "cid": cid})
+        profile_url = f"{our_url}/profile"
+    return RedirectResponse(profile_url)
 
+
+@app.get(path="/profile", response_class=HTMLResponse)
+async def not_profile(request: Request):
+    context = {"url": our_url}
+    return templates.TemplateResponse(
+        name="not_profile.html",
+        context=context,
+        request=request
+    )
+
+
+@app.get(path="/profile/{user_login}", response_class=HTMLResponse)
+async def user_profile(request: Request, user_login: str):
+    #TODO загрузка данных из БД
+    context = {"url": our_url, "user_login": user_login}
+    return templates.TemplateResponse(
+        name="profile.html",
+        context=context,
+        request=request
+    )
 
 @app.on_event("startup")
 async def on_startup():
