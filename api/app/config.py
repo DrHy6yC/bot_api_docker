@@ -2,9 +2,13 @@ from os import getenv
 from dotenv import load_dotenv
 from yandexid import YandexOAuth
 
+from fastapi.templating import Jinja2Templates
+
 from api.app.schemas import Ref
 
 load_dotenv()
+
+templates = Jinja2Templates(directory="api/app/templates")
 
 client_id = getenv('CLIENT_ID')
 client_secret = getenv('CLIENT_SECRET')

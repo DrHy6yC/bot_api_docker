@@ -1,15 +1,15 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, WebSocket, Request
-from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 from starlette.websockets import WebSocketDisconnect
 
 
 from api.app.auth.router import router as auth_router
-from api.app.config import refs, our_url
+from api.app.config import refs, our_url, templates
 from api.app.db import create_db_and_tables
 from api.app.heroes.router import  router as heroes_router
+from api.app.profiles.router import router as profiles_router
 
 
 @asynccontextmanager
@@ -21,11 +21,10 @@ async def lifespan(apps: FastAPI):
 
 app = FastAPI(lifespan=lifespan, title="Api DB")
 
-
-templates = Jinja2Templates(directory="api/app/templates")
-
 app.include_router(auth_router)
 app.include_router(heroes_router)
+app.include_router(profiles_router)
+
 
 @app.get(path="/", response_class=HTMLResponse)
 async def index_page(request: Request):
@@ -46,27 +45,6 @@ async def websocket_endpoint(websocket: WebSocket):
             print(f"WebSocket disconnected: {e}")
             break
 
-
-
-@app.get(path="/profile", response_class=HTMLResponse)
-async def not_profile(request: Request):
-    context = {"url": our_url}
-    return templates.TemplateResponse(
-        name="not_profile.html",
-        context=context,
-        request=request
-    )
-
-
-@app.get(path="/profile/{user_login}", response_class=HTMLResponse)
-async def user_profile(request: Request, user_login: str):
-    #TODO загрузка данных из БД
-    context = {"url": our_url, "user_login": user_login}
-    return templates.TemplateResponse(
-        name="profile.html",
-        context=context,
-        request=request
-    )
 
 @app.get(path="/create_db")
 async def create_db():

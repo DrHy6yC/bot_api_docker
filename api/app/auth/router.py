@@ -20,11 +20,11 @@ async def get_token(request: Request, code: str, cid: str):
         yandex_id = YandexID(token.access_token)
         user_info = yandex_id.get_user_info_json()
         print(user_info)
-        profile_url = f"{our_url}/profile/{cid}"
+        profile_url = f"{our_url}/profiles/{cid}"
         #TODO добавить отпарвку в БД данных о клиенте
     except Exception as e:
         print(e)
-        profile_url = f"{our_url}/profile"
+        profile_url = f"{our_url}/profiles"
     return RedirectResponse(profile_url)
 
 
