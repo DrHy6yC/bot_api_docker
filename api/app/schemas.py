@@ -1,10 +1,24 @@
-from pydantic import BaseModel
 from sqlmodel import Field, SQLModel
 
 
-class Ref(BaseModel):
-    url: str
+class UserBase(SQLModel):
+    email: str = Field(unique=True, index=True)
+    first_name: str = Field()
+    last_name: str = Field()
+
+
+class User(UserBase, table=True):
+    id: int = Field(primary_key=True, index=True)
+    yandex_id: str = Field(unique=True, index=True)
+    display_name: str = Field(index=True)
+    picture: str | None = Field(default=None)
+    provider: str | None = Field(default=None)
+
+#TODO: добавить группу ссылок
+class Ref(SQLModel, table=True):
+    url: str = Field(primary_key=True, index=True)
     target: str
+
 
 class HeroBase(SQLModel):
     name: str = Field(index=True)

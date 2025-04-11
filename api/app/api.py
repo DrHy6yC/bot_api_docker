@@ -1,14 +1,12 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, WebSocket, Request
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
-from starlette.websockets import WebSocketDisconnect
-
 
 # from api.app.auth.router import router as auth_router
 from api.app.config import refs, settings, templates
 from api.app.db import create_db_and_tables
-from api.app.heroes.router import  router as heroes_router
+from api.app.heroes.router import router as heroes_router
 from api.app.profiles.router import router as profiles_router
 
 

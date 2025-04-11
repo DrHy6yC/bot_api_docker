@@ -1,17 +1,14 @@
 from typing import Annotated
 from collections.abc import AsyncGenerator
 
-
 from fastapi import Depends
 from sqlmodel import Session, SQLModel
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-
 sqlite_file_name = "database.db"
 DATABASE_URL = f"sqlite+aiosqlite:///./{sqlite_file_name}"
 
-
-engine = create_async_engine(DATABASE_URL)
+engine = create_async_engine(DATABASE_URL, echo=True)
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
 
