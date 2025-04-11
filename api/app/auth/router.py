@@ -11,8 +11,15 @@ router = APIRouter(
 )
 
 
-@router.get(path="/token")
-async def get_token(request: Request, code: str, cid: str):
+@router.get(
+    path="/token",
+    response_class=RedirectResponse
+)
+async def get_token(
+        request: Request,
+        code: str,
+        cid: str
+) -> RedirectResponse:
     print(request.query_params)
     try:
         token = yandex_oauth.get_token_from_code(code)
@@ -28,8 +35,13 @@ async def get_token(request: Request, code: str, cid: str):
     return RedirectResponse(profile_url)
 
 
-@router.get(path="/login")
-async def login(request: Request):
+@router.get(
+    path="/login",
+    response_class=RedirectResponse
+)
+async def login(
+        request: Request
+)  -> RedirectResponse:
     auth_url = yandex_oauth.get_authorization_url()
     print(auth_url)
     return RedirectResponse(auth_url)

@@ -13,8 +13,14 @@ router = APIRouter(
     tags=["Герои"],
 )
 
-@router.post(path="/", response_model=HeroPublic)
-async def create_hero(hero: HeroCreate, session: SessionDep):
+@router.post(
+    path="/",
+    response_model=HeroPublic
+)
+async def create_hero(
+        hero: HeroCreate,
+        session: SessionDep
+) -> Hero:
     db_hero = Hero.model_validate(hero)
     session.add(db_hero)
     await session.commit()
@@ -22,26 +28,42 @@ async def create_hero(hero: HeroCreate, session: SessionDep):
     return db_hero
 
 
-@router.get(path="/", response_model=list[HeroPublic])
+@router.get(
+    path="/",
+    response_model=list[HeroPublic]
+)
 async def read_heroes(
         session: SessionDep,
         offset: int = 0,
         limit: Annotated[int, Query(le=100)] = 100,
-):
+) -> list[HeroPublic]:
     heroes = (await session.execute(select(Hero).offset(offset).limit(limit))).scalars().all()
     return heroes
 
 
-@router.get(path="/{hero_id}", response_model=HeroPublic)
-async def read_hero(hero_id: int, session: SessionDep):
+@router.get(
+    path="/{hero_id}",
+    response_model=HeroPublic
+)
+async def read_hero(
+        hero_id: int,
+        session: SessionDep
+) -> HeroPublic:
     hero = await session.get(Hero, hero_id)
     if not hero:
         raise HTTPException(status_code=404, detail="Hero not found")
     return hero
 
 
-@router.patch(path="/{hero_id}", response_model=HeroPublic)
-async def update_hero(hero_id: int, hero: HeroUpdate, session: SessionDep):
+@router.patch(
+    path="/{hero_id}",
+    response_model=HeroPublic
+)
+async def update_hero(
+        hero_id: int,
+        hero: HeroUpdate,
+        session: SessionDep
+) -> HeroPublic:
     hero_db = await session.get(Hero, hero_id)
     if not hero_db:
         raise HTTPException(status_code=404, detail="Hero not found")
@@ -52,9 +74,14 @@ async def update_hero(hero_id: int, hero: HeroUpdate, session: SessionDep):
     await session.refresh(hero_db)
     return hero_db
 
-
-@router.delete(path="/{hero_id}")
-async def delete_hero(hero_id: int, session: SessionDep):
+#TODO: Добавить тип возвращаемых данных
+@router.delete(
+    path="/{hero_id}"
+)
+async def delete_hero(
+        hero_id: int,
+        session: SessionDep
+):
     hero = await session.get(Hero, hero_id)
     if not hero:
         raise HTTPException(status_code=404, detail="Hero not found")

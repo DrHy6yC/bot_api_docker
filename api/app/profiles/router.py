@@ -9,8 +9,13 @@ router = APIRouter(
 )
 
 
-@router.get(path="/", response_class=HTMLResponse)
-async def not_profile(request: Request):
+@router.get(
+    path="/",
+    response_class=HTMLResponse
+)
+async def not_profile(
+        request: Request
+) -> HTMLResponse:
     context = {"url": our_url}
     return templates.TemplateResponse(
         name="not_profile.html",
@@ -19,8 +24,14 @@ async def not_profile(request: Request):
     )
 
 
-@router.get(path="/{user_login}", response_class=HTMLResponse)
-async def user_profile(request: Request, user_login: str):
+@router.get(
+    path="/{user_login}",
+    response_class=HTMLResponse
+)
+async def user_profile(
+        request: Request,
+        user_login: str
+) -> HTMLResponse:
     #TODO загрузка данных из БД
     context = {"url": our_url, "user_login": user_login}
     return templates.TemplateResponse(
