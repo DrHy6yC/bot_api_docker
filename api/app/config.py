@@ -1,37 +1,50 @@
-from os import getenv
-from dotenv import load_dotenv
-from yandexid import YandexOAuth
+from auth365.providers.yandex import YandexOAuth
+from pydantic_settings import BaseSettings
+
 
 from fastapi.templating import Jinja2Templates
 
 from api.app.schemas import Ref
 
-load_dotenv()
+class Settings(BaseSettings):
+    YANDEX_CLIENT_ID: str
+    YANDEX_CLIENT_SECRET: str
+    REDIRECT_YANDEX: str
+    OUR_URL: str
+
+    @property
+    def REDIRECT_URI(self) -> str:
+        return f"{self.OUR_URL}/{self.REDIRECT_YANDEX}"
+
+    class Config:
+        env_file = ".env"
+        extra = "ignore"
+
+
+
+settings = Settings()
+
+yandex_oauth = YandexOAuth(
+        client_id=settings.YANDEX_CLIENT_ID,
+        client_secret=settings.YANDEX_CLIENT_SECRET,
+        redirect_uri=settings.REDIRECT_URI,
+    )
 
 templates = Jinja2Templates(directory="api/app/templates")
 
-client_id = getenv('CLIENT_ID')
-client_secret = getenv('CLIENT_SECRET')
-our_url = getenv('OUR_URL')
-redirect_us_uri = getenv('REDIRECT_YANDEX')
-redirect_uri = f'{our_url}/{redirect_us_uri}'
 
-yandex_oauth = YandexOAuth(
-        client_id=client_id,
-        client_secret=client_secret,
-        redirect_uri=redirect_uri
-    )
+
 
 refs_nav = [
-    Ref(url=f'{our_url}/docs#', target='Swagger'),
+    Ref(url=f'{settings.OUR_URL}/docs#', target='Swagger'),
     Ref(url='https://github.com/DrHy6yC', target='Мой Git'),
     Ref(url='https://krasnodar.hh.ru/resume/46d175e3ff08684f230039ed1f564366383552', target='Резюме на hh.ru'),
-    Ref(url=f'{our_url}/auth/login', target='Авторизоваться через Яндекс'),
+    Ref(url=f'{settings.OUR_URL}/profiles/login', target='Авторизоваться через Яндекс'),
 ]
 
 
 refs_body = [
-    Ref(url=f'{our_url}/docs#', target='Посмотреть документацию API'),
+    Ref(url=f'{settings.OUR_URL}/docs#', target='Посмотреть документацию API'),
     Ref(url='https://github.com/DrHy6yC', target='Попасть на мой Git'),
     Ref(url='https://krasnodar.hh.ru/resume/46d175e3ff08684f230039ed1f564366383552', target='Найти резюме классного специалиста'),
 ]

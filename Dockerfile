@@ -2,6 +2,10 @@ FROM python:3.12.9-alpine3.21
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY . .
 
 RUN pip install --upgrade pip
