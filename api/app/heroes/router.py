@@ -1,9 +1,10 @@
 from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends
 
 from sqlmodel import select
 
+from api.app.auth.auth_bearer import JWTBearer
 from api.app.db import SessionDep
 from api.app.schemas import HeroPublic, HeroCreate, Hero, HeroUpdate
 
@@ -11,11 +12,13 @@ from api.app.schemas import HeroPublic, HeroCreate, Hero, HeroUpdate
 router = APIRouter(
     prefix="/heroes",
     tags=["Герои"],
+    dependencies=[Depends(JWTBearer())]
 )
 
 @router.post(
     path="/",
-    response_model=HeroPublic
+    response_model=HeroPublic,
+    dependencies=[Depends(JWTBearer())]
 )
 async def create_hero(
         hero: HeroCreate,
@@ -30,7 +33,8 @@ async def create_hero(
 
 @router.get(
     path="/",
-    response_model=list[HeroPublic]
+    response_model=list[HeroPublic],
+    dependencies=[Depends(JWTBearer())]
 )
 async def read_heroes(
         session: SessionDep,
@@ -43,7 +47,8 @@ async def read_heroes(
 
 @router.get(
     path="/{hero_id}",
-    response_model=HeroPublic
+    response_model=HeroPublic,
+    dependencies=[Depends(JWTBearer())]
 )
 async def read_hero(
         hero_id: int,
@@ -57,7 +62,8 @@ async def read_hero(
 
 @router.patch(
     path="/{hero_id}",
-    response_model=HeroPublic
+    response_model=HeroPublic,
+    dependencies=[Depends(JWTBearer())]
 )
 async def update_hero(
         hero_id: int,
@@ -76,7 +82,8 @@ async def update_hero(
 
 #TODO: Добавить тип возвращаемых данных
 @router.delete(
-    path="/{hero_id}"
+    path="/{hero_id}",
+    dependencies=[Depends(JWTBearer())]
 )
 async def delete_hero(
         hero_id: int,

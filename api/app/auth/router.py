@@ -14,19 +14,19 @@ router = APIRouter(
 )
 
 
-@router.post(
+@router.get(
     path="/login"
 )
 async def login_in_yandex() -> RedirectResponse:
     async with yandex_oauth:
         url = await yandex_oauth.get_authorization_url()
-        return RedirectResponse(url=url)
+        return RedirectResponse(url=url, )
 
 @router.get(
     path="/token",
     response_model=UserToken
 )
-async def oauth_callback(callback: Annotated[OAuth2Callback, Depends()]) -> dict[str, Exception] | UserToken:
+async def get_token_api(callback: Annotated[OAuth2Callback, Depends()]) -> dict[str, Exception] | UserToken:
     try:
         async with yandex_oauth:
             # TODO: Добавить статус код для ошибки авторизации
@@ -35,5 +35,4 @@ async def oauth_callback(callback: Annotated[OAuth2Callback, Depends()]) -> dict
             token = sign_jwt(user.id)
             return token
     except Exception as e:
-        print(e)
         return {"error": e}

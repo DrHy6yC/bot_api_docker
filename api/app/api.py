@@ -20,12 +20,15 @@ async def lifespan(apps: FastAPI):
 
 app = FastAPI(lifespan=lifespan, title="Api DB")
 
-app.include_router(profiles_router)
 app.include_router(auth_router)
+app.include_router(profiles_router)
 app.include_router(heroes_router)
 
 
-@app.get(path="/", response_class=HTMLResponse)
+@app.get(
+    path="/",
+    response_class=HTMLResponse
+)
 async def index_page(request: Request):
     return templates.TemplateResponse(
         name="index.html",

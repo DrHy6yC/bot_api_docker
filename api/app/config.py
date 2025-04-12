@@ -2,6 +2,7 @@ from auth365.providers.yandex import YandexOAuth
 from pydantic_settings import BaseSettings
 
 from fastapi.templating import Jinja2Templates
+from fastapi.security import OAuth2PasswordBearer
 
 from api.app.schemas import Ref
 
@@ -33,6 +34,8 @@ yandex_oauth = YandexOAuth(
 )
 
 templates = Jinja2Templates(directory="api/app/templates")
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 refs_nav = [
     Ref(url=f'{settings.OUR_URL}/docs#', target='Swagger'),
