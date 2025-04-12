@@ -17,7 +17,7 @@ class Settings(BaseSettings):
 
     @property
     def REDIRECT_URI(self) -> str:
-        return f"{self.OUR_URL}/{self.REDIRECT_YANDEX}"
+        return f"{self.OUR_URL}{self.REDIRECT_YANDEX}"
 
     class Config:
         env_file = ".env"
@@ -38,7 +38,7 @@ refs_nav = [
     Ref(url=f'{settings.OUR_URL}/docs#', target='Swagger'),
     Ref(url='https://github.com/DrHy6yC', target='Мой Git'),
     Ref(url='https://krasnodar.hh.ru/resume/46d175e3ff08684f230039ed1f564366383552', target='Резюме на hh.ru'),
-    Ref(url=f'{settings.OUR_URL}/profiles/login', target='Авторизоваться через Яндекс'),
+    Ref(url=f'{settings.OUR_URL}/auth/login', target='Авторизоваться через Яндекс'),
 ]
 
 refs_body = [

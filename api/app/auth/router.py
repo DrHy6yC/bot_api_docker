@@ -1,34 +1,39 @@
-from fastapi import APIRouter, Response, status
+from typing import Annotated
+
+from fastapi import APIRouter, Depends
+from fastapi.responses import RedirectResponse
+from auth365.schemas import OAuth2Callback
 
 from api.app.auth.auth_handler import sign_jwt
-from api.app.schemas import UserTokenBase, UserAuth
+from api.app.config import yandex_oauth
+from api.app.schemas import UserToken
 
 router = APIRouter(
     prefix="/auth",
-    tags=["Автиоризация"],
+    tags=["Авторизация"],
 )
-
-@router.post(
-    path="/register"
-)
-async def create_user(
-        response: Response,
-        user: UserAuth
-) -> UserTokenBase:
-    # TODO: Запись данных пользователя в БД
-    token = sign_jwt(user.yandex_id)
-    return token
-
 
 
 @router.post(
     path="/login"
 )
-async def user_login(
-        response: Response,
-        user: UserAuth
-) -> UserTokenBase:
-    # TODO Проверка данных пользователя на соответствие в БД
-    token = sign_jwt(user.yandex_id)
-    response.status_code = status.HTTP_200_OK
-    return token
+async def login_in_yandex() -> RedirectResponse:
+    async with yandex_oauth:
+        url = await yandex_oauth.get_authorization_url()
+        return RedirectResponse(url=url)
+
+@router.get(
+    path="/token",
+    response_model=UserToken
+)
+async def oauth_callback(callback: Annotated[OAuth2Callback, Depends()]) -> dict[str, Exception] | UserToken:
+    try:
+        async with yandex_oauth:
+            # TODO: Добавить статус код для ошибки авторизации
+            await yandex_oauth.authorize(callback)
+            user = await yandex_oauth.userinfo()
+            token = sign_jwt(user.id)
+            return token
+    except Exception as e:
+        print(e)
+        return {"error": e}

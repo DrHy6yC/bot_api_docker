@@ -15,7 +15,6 @@ def sign_jwt(user_name: str) -> UserToken:
         "user_name": user_name,
         "expires": expires
     }
-    print(payload)
     token = jwt.encode(
         payload,
         settings.JWT_SECRET,
@@ -25,6 +24,8 @@ def sign_jwt(user_name: str) -> UserToken:
     return token_response(token)
 
 
+# TODO: исправить тип возвращаемого значения
+# TODO: добавить обработку ошибок
 def decode_jwt(token: str) -> dict:
     try:
         decoded_token = jwt.decode(
