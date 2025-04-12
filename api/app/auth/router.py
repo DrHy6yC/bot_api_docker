@@ -1,70 +1,34 @@
-from yandexid import YandexID
-from starlette.websockets import WebSocketDisconnect
-from typing import Annotated
+from fastapi import APIRouter, Response, status
 
-from fastapi import Depends, WebSocket
-from starlette.responses import RedirectResponse
-
-
-from auth365.schemas import OAuth2Callback, OpenID
+from api.app.auth.auth_handler import sign_jwt
+from api.app.schemas import UserTokenBase, UserAuth
 
 router = APIRouter(
     prefix="/auth",
-    tags=["Авторизация"],
+    tags=["Автиоризация"],
 )
 
-@router.websocket(path="/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    while True:
-        try:
-            data = await websocket.receive_text()
-            await websocket.send_text(f"Message text was: {data}")
-        except WebSocketDisconnect as e:
-            print(f"WebSocket disconnected: {e}")
-            break
-
-@router.get("/login")
-async def login() -> RedirectResponse:
-    async with oauth:
-        url = await oauth.get_authorization_url()
-        return RedirectResponse(url=url)
+@router.post(
+    path="/register"
+)
+async def create_user(
+        response: Response,
+        user: UserAuth
+) -> UserTokenBase:
+    # TODO: Запись данных пользователя в БД
+    token = sign_jwt(user.yandex_id)
+    return token
 
 
-@router.get("/callback")
-async def oauth_callback(callback: Annotated[OAuth2Callback, Depends()]) -> OpenID:
-    async with oauth:
-        await oauth.authorize(callback)
-        print(callback)
-        return await oauth.userinfo()
 
-    # @router.get(
-    #     path="/",
-    #     response_class=HTMLResponse
-    # )
-    # async def not_profile(
-    #         request: Request
-    # ) -> HTMLResponse:
-    #     context = {"url": settings.OUR_URL}
-    #     return templates.TemplateResponse(
-    #         name="not_profile.html",
-    #         context=context,
-    #         request=request
-    #     )
-    #
-    #
-    # @router.get(
-    #     path="/{user_login}",
-    #     response_class=HTMLResponse
-    # )
-    # async def user_profile(
-    #         request: Request,
-    #         user_login: str
-    # ) -> HTMLResponse:
-    #     #TODO загрузка данных из БД
-    #     context = {"url": settings.OUR_URL, "user_login": user_login}
-    #     return templates.TemplateResponse(
-    #         name="profile.html",
-    #         context=context,
-    #         request=request
-    #     )
+@router.post(
+    path="/login"
+)
+async def user_login(
+        response: Response,
+        user: UserAuth
+) -> UserTokenBase:
+    # TODO Проверка данных пользователя на соответствие в БД
+    token = sign_jwt(user.yandex_id)
+    response.status_code = status.HTTP_200_OK
+    return token

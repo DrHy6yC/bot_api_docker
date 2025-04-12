@@ -6,18 +6,28 @@ class UserBase(SQLModel):
     first_name: str = Field()
     last_name: str = Field()
 
-
-class User(UserBase, table=True):
-    id: int = Field(primary_key=True, index=True)
+class UserAuth(UserBase):
     yandex_id: str = Field(unique=True, index=True)
+
+class User(UserAuth, table=True):
+    id: int = Field(primary_key=True, index=True)
     display_name: str = Field(index=True)
     picture: str | None = Field(default=None)
     provider: str | None = Field(default=None)
 
+class UserTokenBase(SQLModel):
+    access_token: str =Field(primary_key=True, index=True)
+
+class UserToken(UserTokenBase, table=True):
+    id: int =Field(primary_key=True, index=True)
+
 #TODO: добавить группу ссылок
-class Ref(SQLModel, table=True):
-    url: str = Field(primary_key=True, index=True)
+class RefBase(SQLModel):
+    url: str = Field(index=True)
     target: str
+
+class Ref(RefBase, table=True):
+    id: int = Field(primary_key=True, index=True)
 
 
 class HeroBase(SQLModel):
@@ -42,3 +52,4 @@ class HeroUpdate(HeroBase):
     name: str | None = None
     age: int | None = None
     secret_name: str | None = None
+

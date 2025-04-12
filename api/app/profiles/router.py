@@ -16,10 +16,8 @@ router = APIRouter(
 async def oauth_callback(callback: Annotated[OAuth2Callback, Depends()]) -> OpenID:
     async with yandex_oauth:
         await yandex_oauth.authorize(callback)
-        userinfo: OpenID = await yandex_oauth.userinfo()
         #TODO: Дбавить генерацию и отправку токена, сохранение пользователя в БД
-        print(userinfo)
-        return userinfo
+        return await yandex_oauth.userinfo()
 
 
 @router.get("/login")

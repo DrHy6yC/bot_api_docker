@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     YANDEX_CLIENT_SECRET: str
     REDIRECT_YANDEX: str
     OUR_URL: str
+    JWT_ALGORITHM: str
+    JWT_SECRET: str
+    TOKEN_LIFETIME: str
 
     @property
     def REDIRECT_URI(self) -> str:
