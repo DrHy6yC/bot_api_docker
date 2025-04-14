@@ -32,15 +32,13 @@ refs_nav = [
     Ref(url=f'{settings.OUR_URL}/docs#', target='Swagger'),
     Ref(url='https://github.com/DrHy6yC', target='Мой Git'),
     Ref(url='https://krasnodar.hh.ru/resume/46d175e3ff08684f230039ed1f564366383552', target='Резюме на hh.ru'),
-    Ref(url=f'{settings.OUR_URL}/auth/login', target='Авторизоваться через Яндекс'),
+
 ]
 
 refs_body = [
     Ref(url=f'{settings.OUR_URL}/docs#', target='Посмотреть документацию API'),
-    Ref(url='https://github.com/DrHy6yC', target='Попасть на мой Git'),
-    Ref(url='https://krasnodar.hh.ru/resume/46d175e3ff08684f230039ed1f564366383552',
-        target='Найти резюме классного специалиста'),
     Ref(url=f'{settings.OUR_URL}/create_db', target='Создать таблицы в БД'),
+    Ref(url=f'{settings.OUR_URL}/auth/login', target='Получить токен используя УЗ Яндекса'),
 ]
 
 refs = {

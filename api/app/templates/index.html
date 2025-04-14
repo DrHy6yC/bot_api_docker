@@ -5,16 +5,76 @@
 {% endblock %}
 
 {% block body %}
-<nav>
-    {% for ref in refs_nav %}
-    <a href= "{{ ref.url }}">{{ ref.target }}</a>
-    {% endfor %}
-</nav>
-<h1>Добро пожаловать!</h1>
-<p>Это главная страница моего API сервера, тут можно:</p>
-<ul>
-    {% for ref in refs_body %}
-    <li><strong><a href= "{{ ref.url }}">{{ ref.target }}</a></strong></li>
-    {% endfor %}
-</ul>
+<!-- Header -->
+<section id="header">
+    <div class="inner">
+        <span class="icon solid major fa-cloud"></span>
+        <h1>Приветствую, меня зовут <strong>Денис</strong>!<br />
+        Я начинающий Python-разработчик.</h1>
+        <p>Можете ознакомиться с моими проектами</p>
+        <ul class="actions special">
+            <li><a href="#one" class="button scrolly">ПОЕХАЛИ!</a></li>
+        </ul>
+    </div>
+</section>
+
+<section id="four" class="main style2 special">
+    <div class="container">
+        <header class="major">
+            <h2>Где можно найти мое резюме и примеры проектов?</h2>
+        </header>
+        <p>С помощью кнопок ниже, вы попадете на мое резюме на hh.ru и на мой репозиторий на GitHub.</p>
+        <ul class="actions special">
+            <li><a href="{{ refs_nav[2].url }}" class="button wide primary">{{ refs_nav[2].target }}</a></li>
+            <li><a href="{{ refs_nav[1].url }}" class="button wide">{{ refs_nav[1].target }}</a></li>
+        </ul>
+    </div>
+</section>
+
+
+<section id="one" class="main style1">
+    <div class="container">
+        <div class="row gtr-150">
+            <div class="col-6 col-12-medium">
+                <header class="major">
+                    <h2>Все свободное время трачу на то, что бы улучшить свои навыки<br />
+                    и не отставать от современных технологий</h2>
+                </header>
+                <p>А еще у меня есть котики, которые помогают КОТить</p>
+            </div>
+            <div class="col-6 col-12-medium imp-medium">
+                <span class="image fit"><img src="/static/images/pic_me_cat.jpg" alt="" /></span>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section id="two" class="main style2">
+    <div class="container">
+        <div class="row gtr-150">
+            <div class="col-6 col-12-medium">
+                <header class="major">
+                    <h2>Полезные ссылки моего АПИ</h2>
+                </header>
+                <ul>
+                    {% for ref in refs_body %}
+                    <li><strong><a href= "{{ ref.url }}">{{ ref.target }}</a></strong></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-6 col-12-medium">
+                <header class="major">
+                    <h2>Немного обо мне<br />
+                    И почему именно я вам нужен!?</h2>
+                </header>
+                <p>Я искренне надеюсь что смогу приобрести бесценный опыт работая в вашей команде. Для этого я прикладываю максимум усилий, делаю пет проекты, изучаю новые стеки технологий, даже арендовал свой сервер, с собственным доменом (https://drhy6yc.ru/), чтобы компенсировать нехватку опыта коммерческой разработки.</p>
+                <p>Моя суперспособность - быстро обучатся и учить других тому что я умею, а также разбираться в чем то новом и непонятном. Имею опыт работы на руководящей должности в роли заместителя руководителя отдела администрирования баз данных, а значит умею оценивать задачи и давать корректные сроки выполнения.</p>
+                <p>Умею работать с БД не только Postgres, но и DB2, MS SQL, MySQL, SQLite и firebird.</p>
+                <p>Работаю с Docker, Nginx, Grafana, а так же такими фраемворками как: FastAPI, Asyncio, Aiogram, SQLAchemy, даже пробовал tkinter? PyQT5 и конечно же pygame.</p>
+                <p>Активно использую переменные окружения .env, и Git, потому что это мега удобно!</p>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

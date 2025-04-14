@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
 from api.app.auth.auth_bearer import JWTBearer
 from api.app.config import refs, settings, templates
@@ -25,6 +26,11 @@ app.include_router(auth_router)
 app.include_router(profiles_router)
 app.include_router(heroes_router)
 
+app.mount(
+    path='/static',
+    app=StaticFiles(directory='api/app/static'),
+    name='static')
+
 
 @app.get(
     path="/",
@@ -32,7 +38,7 @@ app.include_router(heroes_router)
 )
 async def index_page(request: Request):
     return templates.TemplateResponse(
-        name="index_.html",
+        name="index.html",
         request=request,
         context=refs)
 

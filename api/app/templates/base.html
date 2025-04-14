@@ -1,34 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        {% block title %}
-        {% endblock %}
-    </title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            color: #007BFF;
-        }
-        nav a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: #007BFF;
-        }
-    </style>
-    {% block head%}
-    {% endblock%}
-</head>
-<body>
-    {% block body %}
-    {% endblock %}
-</body>
+<!DOCTYPE HTML>
+<!--
+	Photon by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>
+			{% block title %}
+			{% endblock %}
+		</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="/static/assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="/static/assets/css/noscript.css" /></noscript>
+		{% block head%}
+		{% endblock%}
+	</head>
+	<body class="is-preload">
+		{% block body %}
+    	{% endblock %}
+
+		<!-- Footer -->
+			<section id="footer">
+				<header class="major">
+                    <h2>Контакты для связи</h2>
+                </header>
+				<ul class="icons">
+					<li><a href="https://t.me/Dr_Hy6yC" class="icon brands alt fa-telegram"><span class="label">Telegram</span></a></li>
+					<li><a href="https://github.com/DrHy6yC" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
+					<li><a href="mailto:dr.hy6yc@gmail.com" class="icon solid alt fa-envelope"><span class="label">Почта</span></a></li>
+					<li><a href="tel:+79181385293" class="icon solid alt fa-phone"><span class="label">Телефон</span></a></li>
+				</ul>
+				<ul class="copyright">
+					<li>&copy; Untitled</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					<li>Finalized: <a href="https://t.me/Dr_Hy6yC">Dr.Hy6yC</a></li>
+				</ul>
+			</section>
+
+		<!-- Scripts -->
+			<script src="/static/assets/js/jquery.min.js"></script>
+			<script src="/static/assets/js/jquery.scrolly.min.js"></script>
+			<script src="/static/assets/js/browser.min.js"></script>
+			<script src="/static/assets/js/breakpoints.min.js"></script>
+			<script src="/static/assets/js/util.js"></script>
+			<script src="/static/assets/js/main.js"></script>
+
+	</body>
 </html>
