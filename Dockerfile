@@ -2,7 +2,8 @@ FROM python:3.12.9-alpine3.21
 
 WORKDIR /app
 
-RUN apk update
+# На сервере медленно отрабатывает установка модулей
+# RUN apk update
 
 COPY ./requirements.txt .
 

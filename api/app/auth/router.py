@@ -37,6 +37,7 @@ async def get_token_api(
     token = sign_jwt(user_info.id)
     return token
 
+# TODO: возвращать пользователей на страницу профиля с доступным токеном для работы с ним
 @router.get(
     path="/callback",
 )

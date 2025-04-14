@@ -32,7 +32,7 @@ app.include_router(heroes_router)
 )
 async def index_page(request: Request):
     return templates.TemplateResponse(
-        name="index.html",
+        name="index_.html",
         request=request,
         context=refs)
 
