@@ -1,11 +1,12 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from fastapi.responses import RedirectResponse
 from auth365.schemas import OAuth2Callback
 
 from api.app.auth.auth_handler import sign_jwt
-from api.app.config import yandex_oauth
+from api.app.auth.oauth import get_yandex_auth_url, get_yandex_user_info
+from api.app.config import settings
 from api.app.schemas import UserToken
 
 router = APIRouter(
@@ -18,21 +19,35 @@ router = APIRouter(
     path="/login"
 )
 async def login_in_yandex() -> RedirectResponse:
-    async with yandex_oauth:
-        url = await yandex_oauth.get_authorization_url()
-        return RedirectResponse(url=url, )
+    url = await get_yandex_auth_url()
+    return RedirectResponse(
+        url=url,
+        status_code=status.HTTP_307_TEMPORARY_REDIRECT
+    )
+
 
 @router.get(
     path="/token",
     response_model=UserToken
 )
-async def get_token_api(callback: Annotated[OAuth2Callback, Depends()]) -> dict[str, Exception] | UserToken:
-    try:
-        async with yandex_oauth:
-            # TODO: Добавить статус код для ошибки авторизации
-            await yandex_oauth.authorize(callback)
-            user = await yandex_oauth.userinfo()
-            token = sign_jwt(user.id)
-            return token
-    except Exception as e:
-        return {"error": e}
+async def get_token_api(
+        callback: Annotated[OAuth2Callback, Depends()],
+) -> dict[str, Exception] | UserToken:
+    user_info = await get_yandex_user_info(callback)
+    token = sign_jwt(user_info.id)
+    return token
+
+@router.get(
+    path="/callback",
+)
+async def get_profile_yandex(
+        callback: Annotated[OAuth2Callback, Depends()],
+):
+    user_info = await get_yandex_user_info(callback)
+    token = sign_jwt(user_info.id)
+    print(token)
+    response = RedirectResponse(
+        url=f"{settings.OUR_URL}/profiles/{user_info.id}",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    return response

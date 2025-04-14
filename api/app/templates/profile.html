@@ -1,11 +1,10 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Провиль {{ user_login }}
+Профиль {{ user_login }}
 {% endblock %}
 
 {% block head%}
-<script src="https://yastatic.net/s3/passport-sdk/autofill/v1/sdk-suggest-token-with-polyfills-latest.js"></script> 
 {% endblock%}
 
 {% block body %}
@@ -13,5 +12,6 @@
     <a href= "{{ url }}">Вернемся на главную</a>
 </nav>
 <h1>Авторизация</h1>
-<p>Привет, {{ user_login }}!</p>
+<p>Привет, твой токен: </p>
+<code>{{ token }}</code>
 {% endblock %}

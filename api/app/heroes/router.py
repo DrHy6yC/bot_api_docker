@@ -56,7 +56,10 @@ async def read_hero(
 ) -> HeroPublic:
     hero = await session.get(Hero, hero_id)
     if not hero:
-        raise HTTPException(status_code=404, detail="Hero not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Hero not found"
+        )
     return hero
 
 
@@ -72,7 +75,10 @@ async def update_hero(
 ) -> HeroPublic:
     hero_db = await session.get(Hero, hero_id)
     if not hero_db:
-        raise HTTPException(status_code=404, detail="Hero not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Hero not found"
+        )
     hero_data = hero.model_dump(exclude_unset=True)
     hero_db.sqlmodel_update(hero_data)
     session.add(hero_db)
@@ -80,7 +86,7 @@ async def update_hero(
     await session.refresh(hero_db)
     return hero_db
 
-#TODO: Добавить тип возвращаемых данных
+#TODO: Добавить тип возвращаемых данных, создать схему для сообщения об успешном удалении
 @router.delete(
     path="/{hero_id}",
     dependencies=[Depends(JWTBearer())]
@@ -88,10 +94,13 @@ async def update_hero(
 async def delete_hero(
         hero_id: int,
         session: SessionDep
-):
+)-> dict:
     hero = await session.get(Hero, hero_id)
     if not hero:
-        raise HTTPException(status_code=404, detail="Hero not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Hero not found"
+        )
     await session.delete(hero)
     await session.commit()
     return {"ok": True}

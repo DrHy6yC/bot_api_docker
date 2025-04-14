@@ -1,8 +1,9 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
 
+from api.app.auth.auth_bearer import JWTBearer
 from api.app.config import refs, settings, templates
 from api.app.db import create_db_and_tables
 
@@ -36,7 +37,10 @@ async def index_page(request: Request):
         context=refs)
 
 
-@app.get(path="/create_db")
+@app.get(
+    path="/create_db",
+    dependencies=[Depends(JWTBearer())]
+)
 async def create_db():
     await create_db_and_tables()
     return RedirectResponse(settings.OUR_URL)

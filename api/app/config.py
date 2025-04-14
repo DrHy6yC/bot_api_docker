@@ -1,8 +1,6 @@
-from auth365.providers.yandex import YandexOAuth
 from pydantic_settings import BaseSettings
 
 from fastapi.templating import Jinja2Templates
-from fastapi.security import OAuth2PasswordBearer
 
 from api.app.schemas import Ref
 
@@ -27,16 +25,9 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-yandex_oauth = YandexOAuth(
-    client_id=settings.YANDEX_CLIENT_ID,
-    client_secret=settings.YANDEX_CLIENT_SECRET,
-    redirect_uri=settings.REDIRECT_URI,
-)
-
 templates = Jinja2Templates(directory="api/app/templates")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
+# TODO: Перенести эти ссылки в БД
 refs_nav = [
     Ref(url=f'{settings.OUR_URL}/docs#', target='Swagger'),
     Ref(url='https://github.com/DrHy6yC', target='Мой Git'),
